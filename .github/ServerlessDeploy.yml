@@ -3,7 +3,7 @@ name: Serverless Deployment
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   deploy:
@@ -34,21 +34,21 @@ jobs:
       - name: Install Serverless Framework
         run: npm install -g serverless@latest
 
-      - name: Install Serverless Python Requirements
-        run: npm install --save serverless-python-requirements
+      # - name: Install Serverless Python Requirements
+      #   run: npm install --save serverless-python-requirements
 
-      - name: Check docker version
-        run: docker --version
+      # - name: Check docker version
+      #   run: docker --version
 
-      - name: List all files in pwd
-        run: ls -la
+      # - name: List all files in pwd
+      #   run: ls -la
 
       - name: Deploy to AWS Lambda
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
-          sls deploy --stage staging 
-          #sls remove
+          sls deploy 
 
+#sls remove
 #run
