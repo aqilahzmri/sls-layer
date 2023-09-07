@@ -16,6 +16,7 @@ custom:
 layers:
   pythonRequirements:
     path: layer
+    layersDeploymentBucket: bucket-test-777
 
 package:
   exclude:
