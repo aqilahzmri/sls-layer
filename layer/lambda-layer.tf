@@ -22,13 +22,13 @@ resource "aws_lambda_layer_version" "hanalayer" {
 
 # try to reference it with latest arn
 data "aws_lambda_layer_version" "mylatest" {
-  layer_name = aws_lambda_layer_version.my-lambda-layer.layer_name
+  layer_name = aws_lambda_layer_version.hanalayer.layer_name
 }
 
 resource "aws_lambda_function" "hanalambda" {
   function_name = "hanalambda"
   handler      = "index.handler"
-  runtime      = "python3.11"
+  runtime      = "python3.9"
   layers       = [data.aws_lambda_layer_version.mylatest.arn]
   # other configuration options
 }
