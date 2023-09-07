@@ -9,7 +9,7 @@ provider:
 
 layers:
   FirstLayer:
-    path: layer/
+    path: /
     compatibleRuntimes: 
       - python3.11
     description: "dependencies"
