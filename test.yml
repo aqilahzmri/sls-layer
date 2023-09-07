@@ -1,15 +1,15 @@
-service: Hana-Automation
+# service: Hana-Automation
 
-plugins:
-  - serverless-python-requirements
+# plugins:
+#   - serverless-python-requirements
 
-provider:
-  name: aws
-  runtime: python3.11
+# provider:
+#   name: aws
+#   runtime: python3.11
 
-layers:
-  FirstLayer:
-    path: layer
-    compatibleRuntimes: 
-      - python3.11
-    description: "dependencies"
+# layers:
+#   FirstLayer:
+#     path: layer
+#     compatibleRuntimes: 
+#       - python3.11
+#     description: "dependencies"
