@@ -2,14 +2,23 @@ service: Hana-Automation
 
 plugins:
   - serverless-python-requirements
+  - serverless-lambda-layers
 
 provider:
   name: aws
   runtime: python3.11
 
+custom:
+  pythonRequirements:
+    dockerizePip: true
+    zip: true
+
 layers:
-  FirstLayer:
-    path: /
-    compatibleRuntimes: 
-      - python3.11
-    description: "dependencies"
+  pythonRequirements:
+    path: layer
+
+package:
+  exclude:
+    - "!node_modules/**"
+    - "!yarn.lock"
+    - ".serverless"
