@@ -39,13 +39,13 @@ jobs:
           name: latest-layer
           path: ${{ github.workspace }}/${{ steps.create_zip.outputs.package_name }}
 
-      # - name: Upload Lambda Layer ZIP to S3
-      #   run: |
-      #     aws s3 cp Xlswriter.zip s3://bucket-test-777/hana-test/
-      #   env:
-      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      #     AWS_DEFAULT_REGION: ap-southeast-1  # Replace with your desired AWS region
+      - name: Upload Lambda Layer ZIP to S3
+        run: |
+          aws s3 cp ${{ steps.create_package.outputs.package_name }} s3://bucket-test-777/hana-layer/
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ap-southeast-1  # Replace with your desired AWS region
 
       # - name: Run Terraform
       #   run: |
