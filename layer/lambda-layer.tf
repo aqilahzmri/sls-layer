@@ -42,7 +42,3 @@ terraform {
     dynamodb_table = "terraform-lock"  # Optional: Enable state locking with DynamoDB
   }
 }
-
-output {
-  value = data.aws_lambda_layer_version.mylatest.arn 
-}
