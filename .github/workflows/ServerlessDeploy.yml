@@ -49,8 +49,7 @@ jobs:
         run: |
           cd layer
           terraform init
-          terraform apply -auto-approve
-          terraform apply -lock=false
+          terraform apply -auto-approve ; terraform apply -lock=false
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
