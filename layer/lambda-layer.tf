@@ -11,10 +11,17 @@ provider "aws" {
   region = "ap-southeast-1"
 }
 
+# referencing the latest zip with version id
+data "aws_s3_bucket_object" "layerzip" {
+  bucket = "bucket-test-777"
+  key    = "hana-test/XlsWriter.zip"
+}
+
 # create lambda layer from s3 object
 resource "aws_lambda_layer_version" "hanalayer" {
-  s3_bucket           = "bucket-test-777"
-  s3_key              = "hana-test/XlsWriter.zip"
+  s3_bucket           = data.aws_s3_bucket_object.layerzip.id
+  s3_key              = data.aws_s3_bucket_object.layerzip.key
+  s3_object_version   = data.aws_s3_bucket_object.layerzip.version_id
   layer_name          = "hanalayer"
   compatible_runtimes = ["python3.9"]
   skip_destroy        = true
@@ -25,10 +32,17 @@ data "aws_lambda_layer_version" "mylatest" {
   layer_name = aws_lambda_layer_version.hanalayer.layer_name
 }
 
-resource "aws_lambda_function" "hanalambda" {
-  function_name = "hanalambda"
-  handler      = "index.handler"
-  runtime      = "python3.9"
-  layers       = [data.aws_lambda_layer_version.mylatest.arn]
-  # other configuration options
+#terraform backend configuration, save into the s3 bucket
+terraform {
+  backend "s3" {
+    bucket         = "tfstatehana"
+    key            = "terraform.tfstate"
+    region         = "ap-southeast-1"  # Replace with your desired region
+    encrypt        = true         # Optional: Enable encryption
+    dynamodb_table = "terraform-lock"  # Optional: Enable state locking with DynamoDB
+  }
+}
+
+output {
+  value = data.aws_lambda_layer_version.mylatest.arn 
 }
