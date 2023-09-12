@@ -19,43 +19,41 @@ jobs:
           # Create a new ZIP file containing the updated Lambda Layer contents
           # You can customize this step according to your project structure
           
-          PACKAGE_NAME=build-$(date +"%Y-%m-%d-%H-%M-%S").zip
-          echo "package_name=$PACKAGE_NAME" >> $GITHUB_OUTPUT
           sudo apt-get update
           sudo apt-get install python3 python3-pip zip -y
           rm -rf python
           mkdir python
           pip3 install -r requirements.txt -t python/
-          zip -r $PACKAGE_NAME python/
+          zip -r XlsWriter.zip python/
           
-      - name: check
-        run: |
-          echo ${{ steps.create_zip.outputs.package_name }}
+      # - name: check
+      #   run: |
+      #     echo ${{ steps.create_zip.outputs.package_name }}
           
-      - name: 'Create Artifacts'
-        id: 'create_artifacts'
-        uses: actions/upload-artifact@v3
-        with:
-          name: latest-layer
-          path: ${{ github.workspace }}/${{ steps.create_zip.outputs.package_name }}
+      # - name: 'Create Artifacts'
+      #   id: 'create_artifacts'
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: latest-layer
+      #     path: ${{ github.workspace }}/${{ steps.create_zip.outputs.package_name }}
 
       - name: Upload Lambda Layer ZIP to S3
         run: |
-          aws s3 cp ${{ steps.create_package.outputs.package_name }} s3://bucket-test-777/hana-layer/
+          aws s3 cp XlsWriter.zip s3://bucket-test-777/hana-test/
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ap-southeast-1  # Replace with your desired AWS region
 
-      # - name: Run Terraform
-      #   run: |
-      #     cd layer
-      #     terraform init
-      #     terraform apply -auto-approve
-      #   env:
-      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      #     AWS_DEFAULT_REGION: ap-southeast-1  # Replace with your desired AWS region
+      - name: Run Terraform
+        run: |
+          cd layer
+          terraform init
+          terraform apply -auto-approve
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ap-southeast-1  # Replace with your desired AWS region
 
 
   #     - name: Create Lambda Layer Version
