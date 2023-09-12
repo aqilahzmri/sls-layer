@@ -32,6 +32,19 @@ data "aws_lambda_layer_version" "mylatest" {
   layer_name = aws_lambda_layer_version.hanalayer.layer_name
 }
 
+# create dynamodb table
+resource "aws_dynamodb_table" "dynamodb-state-lock" {
+  name = "terraform-state"
+  hash_key = "LockID"
+  read_capacity = 20
+  write_capacity = 20
+ 
+  attribute {
+    name = "LockID"
+    type = "S"
+  }
+}
+
 #terraform backend configuration, save into the s3 bucket
 terraform {
   backend "s3" {
