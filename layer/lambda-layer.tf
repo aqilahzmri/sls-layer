@@ -19,9 +19,9 @@ data "aws_s3_object" "layerzip" {
 
 # create lambda layer from s3 object
 resource "aws_lambda_layer_version" "hanalayer" {
-  s3_bucket           = data.aws_s3_bucket_object.layerzip.id
-  s3_key              = data.aws_s3_bucket_object.layerzip.key
-  s3_object_version   = data.aws_s3_bucket_object.layerzip.version_id
+  s3_bucket           = data.aws_s3_object.layerzip.id
+  s3_key              = data.aws_s3_object.layerzip.key
+  s3_object_version   = data.aws_s3_object.layerzip.version_id
   layer_name          = "hanalayer"
   compatible_runtimes = ["python3.9"]
   skip_destroy        = true
@@ -30,19 +30,6 @@ resource "aws_lambda_layer_version" "hanalayer" {
 # try to reference it with latest arn
 data "aws_lambda_layer_version" "mylatest" {
   layer_name = aws_lambda_layer_version.hanalayer.layer_name
-}
-
-# create dynamodb table
-resource "aws_dynamodb_table" "dynamodb-state-lock" {
-  name = "terraform-state"
-  hash_key = "LockID"
-  read_capacity = 20
-  write_capacity = 20
- 
-  attribute {
-    name = "LockID"
-    type = "S"
-  }
 }
 
 #terraform backend configuration, save into the s3 bucket
