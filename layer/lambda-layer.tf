@@ -12,7 +12,7 @@ provider "aws" {
 }
 
 # referencing the latest zip with version id
-data "aws_s3_bucket_object" "layerzip" {
+data "aws_s3_object" "layerzip" {
   bucket = "bucket-test-777"
   key    = "hana-test/XlsWriter.zip"
 }
