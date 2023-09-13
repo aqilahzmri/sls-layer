@@ -51,7 +51,5 @@ terraform {
     bucket         = "tfstatehana"
     key            = "terraform.tfstate"
     region         = "ap-southeast-1"  # Replace with your desired region
-    encrypt        = true         # Optional: Enable encryption
-    dynamodb_table = "terraform-lock"  # Optional: Enable state locking with DynamoDB
   }
 }
