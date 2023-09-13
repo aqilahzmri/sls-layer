@@ -20,7 +20,7 @@ data "aws_s3_object" "layerzip" {
 # create lambda layer from s3 object
 resource "aws_lambda_layer_version" "hanalayer" {
   s3_bucket           = "bucket-test-777"
-  s3_key              = data.aws_s3_object.layerzip.key
+  s3_key              = "hana-test/XlsWriter.zip"
   s3_object_version   = data.aws_s3_object.layerzip.version_id
   layer_name          = "hanalayer"
   compatible_runtimes = ["python3.9"]
