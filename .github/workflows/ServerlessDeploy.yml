@@ -59,7 +59,7 @@ jobs:
         run: |
           latest_version=$(aws lambda list-layer-versions --layer-name hanalayer --query 'max_by(LayerVersions, &Version).Version' --output text)
           echo "Latest Layer Version: $latest_version"
-          echo "::set-output name=latest_version::$latest_version"
+          echo "latest_version=$latest_version" >> GITHUB_OUTPUT
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
