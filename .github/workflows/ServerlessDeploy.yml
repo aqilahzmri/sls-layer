@@ -13,18 +13,18 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v2
 
-      - name: Create Lambda Layer ZIP
-        id: 'create_zip'
-        run: |
-          # Create a new ZIP file containing the updated Lambda Layer contents
-          # You can customize this step according to your project structure
+      # - name: Create Lambda Layer ZIP
+      #   id: 'create_zip'
+      #   run: |
+      #     # Create a new ZIP file containing the updated Lambda Layer contents
+      #     # You can customize this step according to your project structure
           
-          sudo apt-get update
-          sudo apt-get install python3 python3-pip zip -y
-          rm -rf python
-          mkdir python
-          pip3 install -r requirements.txt -t python/
-          zip -r XlsWriter.zip python/
+      #     sudo apt-get update
+      #     sudo apt-get install python3 python3-pip zip -y
+      #     rm -rf python
+      #     mkdir python
+      #     pip3 install -r requirements.txt -t python/
+      #     zip -r XlsWriter.zip python/
           
       # - name: check
       #   run: |
@@ -37,77 +37,41 @@ jobs:
       #     name: latest-layer
       #     path: ${{ github.workspace }}/${{ steps.create_zip.outputs.package_name }}
 
-      - name: Upload Lambda Layer ZIP to S3
-        run: |
-          aws s3 cp XlsWriter.zip s3://bucket-test-777/hana-test/
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ap-southeast-1  # Replace with your desired AWS region
+      # - name: Upload Lambda Layer ZIP to S3
+      #   run: |
+      #     aws s3 cp XlsWriter.zip s3://bucket-test-777/hana-test/
+      #   env:
+      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #     AWS_DEFAULT_REGION: ap-southeast-1  # Replace with your desired AWS region
 
-      - name: Run Terraform
-        run: |
-          cd layer
-          terraform init
-          terraform apply -auto-approve ; terraform apply -lock=false
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ap-southeast-1  # Replace with your desired AWS region
+      # - name: Run Terraform
+      #   run: |
+      #     cd layer
+      #     terraform init
+      #     terraform apply -auto-approve ; terraform apply -lock=false
+      #   env:
+      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #     AWS_DEFAULT_REGION: ap-southeast-1  # Replace with your desired AWS region
 
       - name: Determine Latest Layer Version
         run: |
-          layer_name="hanalayer"
-          latest_version=$(aws lambda list-layer-versions --layer-name $layer_name --query 'LayerVersions[-1].VersionNumber' --output text)
-          echo "Latest layer version: $latest_version"
+          latest_version=$(aws lambda list-layer-versions --layer-name YourLayerName --query 'max_by(LayerVersions, &Version).Version' --output text)
+          echo "Latest Layer Version: $latest_version"
+          echo "::set-output name=latest_version::$latest_version"
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ap-southeast-1  # Replace with your desired AWS region
 
-      - name: Update Lambda Function
-        run: |
-          aws lambda update-function-configuration --function-name hanalambda --layers arn:aws:lambda:ap-southeast-1:${{ secrets.AWS_ACCOUNT_ID }}:layer:hanalayer:$latest_version
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ap-southeast-1  # Replace with your desired AWS region
+      # - name: Update Lambda Function
+      #   run: |
+      #     aws lambda update-function-configuration --function-name hanalambda --layers arn:aws:lambda:ap-southeast-1:${{ secrets.AWS_ACCOUNT_ID }}:layer:hanalayer:$latest_version
+      #   env:
+      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #     AWS_DEFAULT_REGION: ap-southeast-1  # Replace with your desired AWS region
   
   
-  
-  #     - name: Create Lambda Layer Version
-  #       id: create-layer-version
-  #       run: |
-  #         # Create a new version of the Lambda Layer using the uploaded ZIP file
-  #         LATEST_VERSION=$(aws lambda publish-layer-version --layer-name hanalayer --description "Updated Layer" --content S3Bucket=bucket-test-777,S3Key=hana-test/Xlswriter.zip --query 'Version' --output text)
-  #         echo "::set-output name=latest_layer_version::$LATEST_VERSION"
-  #       env:
-  #         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  #         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  #         AWS_DEFAULT_REGION: ap-southeast-1  # Replace with your desired AWS region
 
-  # update-lambda-function:
-  #   runs-on: ubuntu-latest 
-  #   needs: update-lambda-layer
-
-  #   steps:
-  #     - name: Checkout Code
-  #       uses: actions/checkout@v2
-
-  #     - name: Get Latest Lambda Layer Version
-  #       id: get-latest-version
-  #       run: echo "::set-output name=latest_layer_version::$(aws lambda list-layer-versions --layer-name hanalayer --query 'max_by(Versions, &Version).Version' --output text)"
-  #       env:
-  #         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  #         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  #         AWS_DEFAULT_REGION: ap-southeast-1  # Replace with your desired AWS region
-
-  #     - name: Update Lambda Function with Latest Layer
-  #       run: |
-  #         # Update the Lambda function configuration to use the latest Lambda Layer version
-  #         aws lambda update-function-configuration --function-name hanalambda --layers arn:aws:lambda:ap-southeast-1:${{ secrets.AWS_ACCOUNT_ID }}:layer:hanalayer:${{ steps.get-latest-version.outputs.latest_layer_version }}
-  #       env:
-  #         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  #         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  #         AWS_DEFAULT_REGION: ap-southeast-1  # Replace with your desired AWS region
-  #         AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}  # Add your AWS account ID as a secret
