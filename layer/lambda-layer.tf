@@ -32,6 +32,18 @@ data "aws_lambda_layer_version" "mylatest" {
   layer_name = aws_lambda_layer_version.hanalayer.layer_name
 }
 
+resource "aws_lambda_function" "hanalambda" {
+  function_name = "hanalambda"  # Replace with your Lambda function's name
+  handler = "lambda_function.handler"  # Update the handler as per your existing function
+  runtime = "python3.9"  # Update the runtime if necessary
+
+  # Specify the ARNs of the Lambda Layers to attach to your function
+  layers = [
+    data.aws_lambda_layer_version.mylatest.arn,
+    # Add more layers if needed
+  ]
+}
+
 #terraform backend configuration, save into the s3 bucket
 terraform {
   backend "s3" {
