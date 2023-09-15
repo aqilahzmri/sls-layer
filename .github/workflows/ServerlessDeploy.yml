@@ -26,10 +26,6 @@ jobs:
           pip3 install -r requirements.txt -t python/
           zip -r XlsWriter.zip python/
           
-      - name: check
-        run: |
-          echo ${{ steps.create_zip.outputs.package_name }}
-          
       - name: 'Create Artifacts'
         id: 'create_artifacts'
         uses: actions/upload-artifact@v3
@@ -56,7 +52,7 @@ jobs:
           AWS_DEFAULT_REGION: ap-southeast-1  # Replace with your desired AWS region
 
       - name: Update Lambda
-        id: 'get_latest_layer'
+        id: 'update_latest'
         run: |
           latest_version=$(aws lambda list-layer-versions --layer-name hanalayer --query 'max_by(LayerVersions, &Version).Version' --output text)
           echo "Latest Layer Version: $latest_version"
