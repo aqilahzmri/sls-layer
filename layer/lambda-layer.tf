@@ -11,13 +11,13 @@ provider "aws" {
   region = "ap-southeast-1"
 }
 
-# referencing the latest zip with version id
+# referencing the latest zip in s3 with version id
 data "aws_s3_object" "layerzip" {
   bucket = "bucket-test-777"
   key    = "hana-test/XlsWriter.zip"
 }
 
-# create lambda layer from s3 object
+# create lambda layer with latest zip in s3
 resource "aws_lambda_layer_version" "hanalayer" {
   s3_bucket           = "bucket-test-777"
   s3_key              = "hana-test/XlsWriter.zip"
@@ -25,11 +25,6 @@ resource "aws_lambda_layer_version" "hanalayer" {
   layer_name          = "hanalayer"
   compatible_runtimes = ["python3.9"]
   skip_destroy        = true
-}
-
-# try to reference it with latest arn
-data "aws_lambda_layer_version" "mylatest" {
-  layer_name = aws_lambda_layer_version.hanalayer.layer_name
 }
 
 #terraform backend configuration, save into the s3 bucket
