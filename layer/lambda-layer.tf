@@ -17,7 +17,7 @@ data "aws_s3_object" "layerzip" {
   key    = "hana-test/XlsWriter.zip"
 }
 
-# create lambda layer with latest zip in s3
+# create lambda layer with latest zip in s3 can be used even for update cause there will be tfstate store in s3 and it will differentiate the object version id
 resource "aws_lambda_layer_version" "hanalayer" {
   s3_bucket           = "bucket-test-777"
   s3_key              = "hana-test/XlsWriter.zip"
