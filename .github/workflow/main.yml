@@ -3,7 +3,7 @@ name: Update Lambda Layer
 on:
   push:
     branches:
-      - test-tf
+      - aqil-hana
 
 jobs:
   update-lambda-layer:
