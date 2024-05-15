@@ -1,4 +1,4 @@
-name: Update Lambda Layer and Function try 1
+name: Update Lambda Layer
 
 on:
   push:
