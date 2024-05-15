@@ -26,12 +26,12 @@ jobs:
           pip3 install -r requirements.txt -t python/
           zip -r XlsWriter.zip python/
           
-      - name: 'Create Artifacts'
-        id: 'create_artifacts'
-        uses: actions/upload-artifact@v3
-        with:
-          name: latest-layer
-          path: ${{ github.workspace }}/${{ steps.create_zip.outputs.package_name }}
+      # - name: 'Create Artifacts'
+      #   id: 'create_artifacts'
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: latest-layer
+      #     path: ${{ github.workspace }}/${{ steps.create_zip.outputs.package_name }}
 
       - name: Upload Lambda Layer ZIP to S3
         run: |
