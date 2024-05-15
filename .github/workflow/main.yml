@@ -51,15 +51,15 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ap-southeast-1  # Replace with your desired AWS region
 
-      - name: Update Lambda
-        id: 'update_latest'
-        run: |
-          latest_version=$(aws lambda list-layer-versions --layer-name hanalayer --query 'max_by(LayerVersions, &Version).Version' --output text)
-          echo "Latest Layer Version: $latest_version"
-          aws lambda update-function-configuration --function-name hanalambda --layers arn:aws:lambda:ap-southeast-1:${{ secrets.AWS_ACCOUNT_ID }}:layer:hanalayer:$latest_version
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ap-southeast-1  # Replace with your desired AWS region
+      # - name: Update Lambda
+      #   id: 'update_latest'
+      #   run: |
+      #     latest_version=$(aws lambda list-layer-versions --layer-name hanalayer --query 'max_by(LayerVersions, &Version).Version' --output text)
+      #     echo "Latest Layer Version: $latest_version"
+      #     aws lambda update-function-configuration --function-name hanalambda --layers arn:aws:lambda:ap-southeast-1:${{ secrets.AWS_ACCOUNT_ID }}:layer:hanalayer:$latest_version
+      #   env:
+      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #     AWS_DEFAULT_REGION: ap-southeast-1  # Replace with your desired AWS region
   
 
