@@ -11,15 +11,19 @@ provider "aws" {
   region = "ap-southeast-1"
 }
 
+variable "bucket_name" {
+  type = string
+}
+
 # referencing the latest zip in s3 with version id
 data "aws_s3_object" "layerzip" {
-  bucket = "bucket-test-777"
+  bucket = var.bucket_name # "bucket-test-777"
   key    = "hana-test/XlsWriter.zip"
 }
 
 # create lambda layer with latest zip in s3 can be used even for update cause there will be tfstate store in s3 and it will differentiate the object version id
 resource "aws_lambda_layer_version" "hanalayer" {
-  s3_bucket           = "bucket-test-777"
+  s3_bucket           = var.bucket_name
   s3_key              = "hana-test/XlsWriter.zip"
   s3_object_version   = data.aws_s3_object.layerzip.version_id
   layer_name          = "hanalayer"
